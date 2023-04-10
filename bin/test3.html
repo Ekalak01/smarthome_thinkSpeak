@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sensor Control</title>
+  <link rel="stylesheet" href="css.css">
+</head>
+<body>
+  <header>
+    <h1>Sensor Control</h1>
+    <div id="clock"></div>
+  </header>
+  
+  <section>
+    <h2>ON // OFF</h2>
+    <label class="switch">
+      <input type="checkbox">
+      <span class="slider round"></span>
+    </label>
+  </section>
+  
+  <section>
+    <h3>LDR</h3>
+    <form>
+      <label for="temp-start-time">Start Time:</label>
+      <input type="time" id="temp-start-time" name="temp-start-time">
+      <br>
+      <label for="temp-end-time">End Time:</label>
+      <input type="time" id="temp-end-time" name="temp-end-time">
+      <br>
+      <button onclick="sendSensorControl()">Set Time</button>
+    </form>
+  </section>
+  
+  <section>
+    <h3>CO2 Sensor</h3>
+    <form>
+      <label for="co2-start-time">Start Time:</label>
+      <input type="time" id="co2-start-time" name="co2-start-time">
+      <br>
+      <label for="co2-end-time">End Time:</label>
+      <input type="time" id="co2-end-time" name="co2-end-time">
+      <br>
+      <button onclick="sendSensorControl()">Set Time</button>
+    </form>
+  </section>
+  
+  <script>
+    function sendSensorControl() {
+      const tempStartTime = document.getElementById("temp-start-time").value;
+      const tempEndTime = document.getElementById("temp-end-time").value;
+      const co2StartTime = document.getElementById("co2-start-time").value;
+      const co2EndTime = document.getElementById("co2-end-time").value;
+
+      // Send start and end times to ESP32 using AJAX or API
+      // Example of using AJAX can be found at: https://www.w3schools.com/xml/ajax_intro.asp
+      console.log("Temperature Sensor Start Time: " + tempStartTime);
+      console.log("Temperature Sensor End Time: " + tempEndTime);
+      console.log("CO2 Sensor Start Time: " + co2StartTime);
+      console.log("CO2 Sensor End Time: " + co2EndTime);
+    }
+    
+    function showClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}:${seconds}`;
+      document.getElementById("clock").textContent = timeString;
+    }
+    
+    setInterval(showClock, 1000);
+  </script>
+</body>
+</html>

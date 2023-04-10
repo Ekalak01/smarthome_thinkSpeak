@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Real-time Chart from ThingSpeak</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+  <canvas id="myChart"></canvas>
+
+  <script>
+    // Create the Chart.js line chart
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Field 1',
+          data: [],
+          fill: false,
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Time'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Value'
+            },
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 10
+            }
+          }]
+        }
+      }
+    });
+
+    // Create the WebSocket client and connect to the ESP32 WebSocket server
+    var ws = new WebSocket('ws://' + window.location.hostname + ':80/');
+    ws.onopen = function() {
+      console.log('Connected to ESP32 WebSocket server!');
+    };
+    ws.onmessage = function(event) {
+      var value = event.data;
+
+      // Add the new data point to the chart
+      var time = new Date();
+      chart.data.labels.push(time.toLocaleTimeString());
+      chart.data.datasets[0].data.push(value);
+      chart.update();
+    };
+  </script>
+</body>
+</html>

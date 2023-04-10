@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Control</title>
+  <script>
+    function sendSensorControl() {
+      const startTime = document.getElementById("start-time").value;
+      const endTime = document.getElementById("end-time").value;
+      // ส่งค่าเวลาเริ่มต้นและสิ้นสุดให้ ESP32 ผ่าน AJAX หรือ API
+      // ตัวอย่างการใช้ AJAX สามารถดูได้จาก: https://www.w3schools.com/xml/ajax_intro.asp
+      console.log("Start Time: " + startTime);
+      console.log("End Time: " + endTime);
+    }
+  </script>
+</head>
+<body>
+    
+  <h1>Sensor Control</h1>
+  <!-- Rounded switch -->
+   <label> for="start-time">ON // OFF</label>
+    <label class="switch">
+        <input type="checkbox">
+        <span class="slider round"></span>
+        
+    </label>
+  <h3>Temperature Sensor</h3>
+  <label for="start-time">Start Time:</label>
+  <input type="time" id="start-time" name="start-time">
+  <br>
+  <label for="end-time">End Time:</label>
+  <input type="time" id="end-time" name="end-time">
+  <br>
+  <button onclick="sendSensorControl()">Set Time</button>
+  <h3>Co2 Sensor</h3>
+  <label for="start-time">Start Time:</label>
+  <input type="time" id="start-time" name="start-time">
+  <br>
+  <label for="end-time">End Time:</label>
+  <input type="time" id="end-time" name="end-time">
+  <br>
+  <button onclick="sendSensorControl()">Set Time</button>
+</body>
+</html>

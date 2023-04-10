@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ThingSpeak Graph Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart"></canvas>
+    <script>
+        // Get data from ThingSpeak
+        fetch("https://api.thingspeak.com/channels/1850223/fields/1.json?results=2")
+            .then(response => response.json())
+            .then(data => {
+                // Extract values and labels from the data
+                const value = data.feeds[0].field1;
+                const timestamp = data.feeds[0].created_at;
+
+                // Create a new Chart.js line chart
+                const ctx = document.getElementById('myChart').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [timestamp],
+                        datasets: [{
+                            label: 'ThingSpeak Data',
+                            data: [value],
+                            fill: false,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {}
+                });
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+</html>

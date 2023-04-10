@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sensor Control</title>
+    <link rel="stylesheet" href="css.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <style>
+      canvas {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+      }
+      .container {
+        display: flex;
+        max-width: 1200px;
+        margin: auto;
+        justify-content: center;
+        align-items: center;
+        <!-- justify-content: space-between; -->
+      }
+      .left-section {
+        width: 40%;
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .right-section {
+        width: 55%;
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .graph-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+      }
+    </style>
+  </head>
+  <header >
+    <h1>Sensor Control v1</h1>
+    <div id="clock"></div>
+  </header>
+  <section class="container">
+    <dev >
+      <h2>Turn On // Off</h2>
+    </dev>
+    <section> 
+      <label class="switch">
+        <input type="checkbox" id="on-off-switch" onclick="on_off_function()" >
+        <span class="slider round"></span>
+      </label>
+    </section>
+  </section>
+  <!-- Setting -->
+  <dev class="container">
+    <section class = "left-section" id ="setting-temp-body" style="display:" >
+      <h3>LDR</h3>
+      <form>
+        <label for="temp-start-time">Start Time:</label>
+        <input type="time" id="temp-start-time" name="temp-start-time">
+        <br>
+        <label for="temp-end-time">End Time:</label>
+        <input type="time" id="temp-end-time" name="temp-end-time">
+        <br>
+        <button type="button" onclick="sendSensorControltemp()">Set Time temp</button>
+      </form>
+    </section>
+    <section class = "left-section" id = "setting-co2-body" style="display:" >
+      <h3>CO2 Sensor</h3>
+      <form>
+        <label for="co2-start-time">Start Time:</label>
+        <input type="time" id="co2-start-time" name="co2-start-time">
+        <br>
+        <label for="co2-end-time">End Time:</label>
+        <input type="time" id="co2-end-time" name="co2-end-time">
+        <br>
+        <button type="button" onclick="sendSensorControlco2()">Set Time co2</button>
+      </form>
+    </section>
+  </dev>
+  <!-- Chart -->
+  <section class="container">
+    <div style="width: 800px;">
+      <canvas id="myChart"></canvas>
+    </div>
+    <script>
+      var ctx = document.getElementById("myChart").getContext("2d");
+      var myChart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: ["Monday", "TUESDAY", "WENDNESDAY", "TURSDAY", "FRIDAY", "SATUDAY", "SUNDAY"],
+          datasets: [
+            {
+              label: "LDR",
+              data: [2, 6, 8, 10, 2, 4, 10],
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1
+            },
+          ]
+        },
+        options: {
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true
+                }
+              }
+            ]
+          }
+        }
+      });
+    </script>
+  </section>
+</body>
+  <script>
+
+    function on_off_function(){
+      // Get the checkbox
+      var checkBox = document.getElementById("on-off-switch");
+      // Get the output text
+      var text = document.getElementById("text");
+      // Get the Setting Output
+      var setting_temp_body = document.getElementById("setting-temp-body");
+      var setting_co2_body = document.getElementById("setting-co2-body");
+      var setting = document.getElementById("setting");
+    
+      // If the checkbox is checked, display the output text
+      if (checkBox.checked == true){
+        setting_temp_body.style.display = "block";
+        setting_co2_body.style.display = "block";
+        setting.style.display = "block";
+      } else {
+        setting_temp_body.style.display = "none";
+        setting_co2_body.style.display = "none";
+      }
+      // Create a new XMLHttpRequest object
+      var xhttp = new XMLHttpRequest();
+      // Set up the request parameters
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Display the response from the server in the console
+          console.log(this.responseText);
+        }
+      };
+      
+      xhttp.open("GET", "/check-on-off" + checkBox, true);
+      xhttp.send();
+    }
+
+    // Function to send sensor control data for temperature sensor to server
+    function sendSensorControltemp() {
+      // Get the start and end times from the form
+      var startTime = document.getElementById("temp-start-time").value;
+      var endTime = document.getElementById("temp-end-time").value;
+      
+      // Create a new XMLHttpRequest object
+      var xhttp = new XMLHttpRequest();
+      
+      // Set up the request parameters
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Display the response from the server in the console
+          console.log(this.responseText);
+        }
+      };
+      
+      xhttp.open("GET", "/sensor-control-temp?start=" + startTime + "&end=" + endTime, true);
+      xhttp.send();
+    }
+    
+    // Function to send sensor control data for CO2 sensor to server
+    function sendSensorControlco2() {
+      // Get the start and end times from the form
+      var startTime = document.getElementById("co2-start-time").value;
+      var endTime = document.getElementById("co2-end-time").value;
+      
+      // Create a new XMLHttpRequest object
+      var xhttp = new XMLHttpRequest();
+      
+      // Set up the request parameters
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Display the response from the server in the console
+          console.log(this.responseText);
+        }
+      };
+      
+      xhttp.open("GET", "/sensor-control-co2?start=" + startTime + "&end=" + endTime, true);
+      xhttp.send();
+    }
+    
+    function showClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}:${seconds}`;
+      document.getElementById("clock").textContent = timeString;
+    }
+    
+    setInterval(showClock, 1000);
+  </script>
+</body>
+</html>
