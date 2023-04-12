@@ -1,18 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>ESP32 Sensor Control</title>
+  <title>ThingSpeak Chart Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-	<h1>ESP32 Sensor Control</h1>
-	<form action="/sensor-control" method="GET">
-		<label for="sensor">Sensor:</label>
-		<input type="text" id="sensor" name="sensor" required><br><br>
-		<label for="start">Start Time:</label>
-		<input type="text" id="start" name="start" required><br><br>
-		<label for="end">End Time:</label>
-		<input type="text" id="end" name="end" required><br><br>
-		<input type="submit" value="Submit">
-	</form>
+  <canvas id="myChart"></canvas>
+
+  <script>
+    // Open a WebSocket connection to the ThingSpeak channel
+    const socket = new WebSocket('wss://api.thingspeak.com/channels/1850223/subscribe/FSR7TIEJWNHWZOMO/fields/5');
+
+    // Handle incoming data from the WebSocket
+    socket.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+
+      // Extract the field1 values and timestamps from the response
+      const values = [data.field5];
+      const timestamps = [data.created_at];
+
+      // Create a new Chart.js line chart
+      const ctx = document.getElementById('myChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timestamps,
+          datasets: [{
+            label: 'Field 5',
+            data: values,
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }]
+        },
+        options: {}
+      });
+    };
+  </script>
 </body>
 </html>

@@ -95,16 +95,16 @@
         <button type="button" onclick="sendSensorControltemp()">Set Time temp</button>
       </form>
     </section>
-    <section class = "left-section" id = "setting-co2-body" style="display:none" >
-      <h3>CO2 Sensor</h3>
+    <section class = "left-section" id = "setting-ldr-body" style="display:none" >
+      <h3>LDR Sensor</h3>
       <form>
-        <label for="co2-start-time">Start Time:</label>
-        <input type="time" id="co2-start-time" name="co2-start-time">
+        <label for="ldr-start-time">Start Time:</label>
+        <input type="time" id="ldr-start-time" name="ldr-start-time">
         <br>
-        <label for="co2-end-time">End Time:</label>
-        <input type="time" id="co2-end-time" name="co2-end-time">
+        <label for="ldr-end-time">End Time:</label>
+        <input type="time" id="ldr-end-time" name="ldr-end-time">
         <br>
-        <button type="button" onclick="sendSensorControlco2()">Set Time co2</button>
+        <button type="button" onclick="sendSensorControlldr()">Set Time ldr</button>
       </form>
     </section>
   </dev>
@@ -200,36 +200,96 @@
 
 </body>
   <script>
-    function on_off_function(){
+    window.onload = getSwitchState;
+
+    function getSensorData() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/handledatetime");
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var responseData = JSON.parse(this.responseText);
+          updateUIdatetime(responseData);
+          console.log(responseData)
+        }
+      }
+    }
+
+    function updateUIdatetime(responseData) {
+      // Update the UI with the new data
+      document.getElementById("temp-start-time").value = responseData.temp.start;
+      document.getElementById("temp-end-time").value = responseData.temp.end;
+      document.getElementById("ldr-start-time").value = responseData.ldr.start;
+      document.getElementById("ldr-end-time").value = responseData.ldr.end;
+    }
+    
+    function getSwitchState() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/switchstate");
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var checkBoxValue = this.responseText;
+          // Handle the switch state here
+          console.log("Switch state: " + checkBoxValue);
+          // Update the UI based on the switch state
+          updateUI(checkBoxValue);
+        }
+      };
+    }
+  
+    function updateUI(checkBoxValue) {
       // Get the checkbox
       var checkBox = document.getElementById("on-off-switch");
+      // Update the checkbox checked property based on the switch state
+      checkBox.checked = (checkBoxValue === "1");
+      var setting_temp_body = document.getElementById("setting-temp-body");
+      var setting_ldr_body = document.getElementById("setting-ldr-body");
+      // Update the UI based on the switch state
+      if (checkBoxValue === "1") {
+        setting_temp_body.style.display = "block";
+        setting_ldr_body.style.display = "block";
+        getSensorData();
+      } else {
+        setting_temp_body.style.display = "none";
+        setting_ldr_body.style.display = "none";
+      }
+    }
+  
+
+    function on_off_function(){
+      // Get the checkbox
+      var checkBox = document.getElementById("on-off-switch").checked;
       // Get the output text
       var text = document.getElementById("text");
       // Get the Setting Output
       var setting_temp_body = document.getElementById("setting-temp-body");
-      var setting_co2_body = document.getElementById("setting-co2-body");
+      var setting_ldr_body = document.getElementById("setting-ldr-body");
       var setting = document.getElementById("setting");
     
       // If the checkbox is checked, display the output text
-      if (checkBox.checked == true){
+      if (checkBox == true){
         setting_temp_body.style.display = "block";
-        setting_co2_body.style.display = "block";
-        setting.style.display = "block";
+        setting_ldr_body.style.display = "block";
+        var switchState = true;
       } else {
         setting_temp_body.style.display = "none";
-        setting_co2_body.style.display = "none";
+        setting_ldr_body.style.display = "none";
+        var switchState = false;
       }
+      console.log("Switch state: " + switchState);
       // Create a new XMLHttpRequest object
       var xhttp = new XMLHttpRequest();
       // Set up the request parameters
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           // Display the response from the server in the console
-          console.log(this.responseText);
+          // Handle the switch state here
+          console.log("Switch state: " + switchState);
         }
       };
       
-      xhttp.open("GET", "/check-on-off" + checkBox, true);
+      xhttp.open("GET", "/check-on-off?checkBox=" + switchState, true);
       xhttp.send();
     }
 
@@ -247,18 +307,20 @@
         if (this.readyState == 4 && this.status == 200) {
           // Display the response from the server in the console
           console.log(this.responseText);
+          // Update the HTML based on the response
+          
         }
-      };
-      
+      };      
+  
       xhttp.open("GET", "/sensor-control-temp?start=" + startTime + "&end=" + endTime, true);
       xhttp.send();
     }
     
-    // Function to send sensor control data for CO2 sensor to server
-    function sendSensorControlco2() {
+    // Function to send sensor control data for LDR sensor to server
+    function sendSensorControlldr() {
       // Get the start and end times from the form
-      var startTime = document.getElementById("co2-start-time").value;
-      var endTime = document.getElementById("co2-end-time").value;
+      var startTime = document.getElementById("ldr-start-time").value;
+      var endTime = document.getElementById("ldr-end-time").value;
       
       // Create a new XMLHttpRequest object
       var xhttp = new XMLHttpRequest();
@@ -268,10 +330,11 @@
         if (this.readyState == 4 && this.status == 200) {
           // Display the response from the server in the console
           console.log(this.responseText);
-        }
+          // Update the HTML based on the response
+          }
       };
       
-      xhttp.open("GET", "/sensor-control-co2?start=" + startTime + "&end=" + endTime, true);
+      xhttp.open("GET", "/sensor-control-ldr?start=" + startTime + "&end=" + endTime, true);
       xhttp.send();
     }
     

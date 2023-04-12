@@ -1,6 +1,7 @@
 #include <WiFiClientSecure.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <TridentTD_LineNotify.h>
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -19,6 +20,7 @@ const String apiKey = "V9P22LSB1ZDVJK8O";
 const int DHTType = DHT11;
 const int DHTPin = 27;
 DHT dht(DHTPin, DHTType);
+#define LINE_TOKEN "5Awu3lpOGJwOYNYI2ZGfzqLXM5kCuQkjnuJUCh8Hil7"
 
 void setup() {
   Serial.begin(115200);
@@ -30,9 +32,14 @@ void setup() {
     Serial.println("Connecting to WiFi...");
   }
   Serial.println("Connected to WiFi!");
-
+  // กำหนด Line Token
+    LINE.setToken(LINE_TOKEN);
+  
+    // ตัวอย่างส่งข้อความ
+    LINE.notify("อุณหภูมิ เกินกำหนด");
   // Initialize DHT sensor
   dht.begin();
+  
 }
 
 void loop() {

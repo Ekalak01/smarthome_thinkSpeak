@@ -196,10 +196,23 @@
       </section>
  </dev>
 
-
-
 </body>
   <script>
+    window.onload = on_off_function;
+    // Using XMLHttpRequest
+    function getSwitchState() {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "/switchstate");
+      xhr.send();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var switchState = this.responseText;
+          // Handle the switch state here
+          console.log("Switch state: " + switchState);
+        }
+      };
+    }
+
     function on_off_function(){
       // Get the checkbox
       var checkBox = document.getElementById("on-off-switch");
@@ -214,23 +227,27 @@
       if (checkBox.checked == true){
         setting_temp_body.style.display = "block";
         setting_co2_body.style.display = "block";
-        setting.style.display = "block";
+        
       } else {
         setting_temp_body.style.display = "none";
         setting_co2_body.style.display = "none";
       }
+      console.log("Switch state: " + checkBox.checked);
       // Create a new XMLHttpRequest object
+      var switchState = checkBox.checked
       var xhttp = new XMLHttpRequest();
       // Set up the request parameters
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
           // Display the response from the server in the console
-          console.log(this.responseText);
+          var switchState = this.responseText;
+          // Handle the switch state here
+          console.log("Switch state: " + switchState);
         }
       };
       
-      xhttp.open("GET", "/check-on-off" + checkBox, true);
-      xhttp.send();
+      //xhttp.open("GET", "/check-on-off?checkBox=" + checkBox, true);
+      //xhttp.send();
     }
 
     // Function to send sensor control data for temperature sensor to server
