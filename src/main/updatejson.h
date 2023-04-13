@@ -60,12 +60,13 @@ bool currentStateJSON() {
   return state;
 }
 
-struct SensorData{
+struct SensorData {
   String tempStart;
   String tempEnd;
   String ldrStart;
   String ldrEnd;
 };
+
 SensorData readJSON_return() {
   SensorData sensorData;
   // Open the JSON file for reading
@@ -97,6 +98,11 @@ SensorData readJSON_return() {
   String tempEnd = root["temp"]["end"];
   String ldrStart = root["ldr"]["start"];
   String ldrEnd = root["ldr"]["end"];
+
+  sensorData.tempStart = tempStart;
+  sensorData.tempEnd = tempEnd;
+  sensorData.ldrStart = ldrStart;
+  sensorData.ldrEnd = ldrEnd;
   return sensorData;
 }
 

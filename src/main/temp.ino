@@ -1,3 +1,3 @@
-void temp_test(){
+void temp_test() {
   Serial.print("test");
-  }
+}

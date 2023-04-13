@@ -18,8 +18,8 @@ void switchstate(AsyncWebServerRequest *request) {
   if (request->hasParam("checkBox")) {
     String checkBox = request->getParam("checkBox")->value();
     // Handle the received checkBox value
-//    Serial.print("CheckBox value: ");
-//    Serial.println(checkBox);
+    //    Serial.print("CheckBox value: ");
+    //    Serial.println(checkBox);
     // Convert the checkBox value to a boolean
     bool checkBoxValue = checkBox == "true";
     // Handle the checkBoxValue as needed
@@ -36,10 +36,10 @@ void handleSensorControlTemp(AsyncWebServerRequest* request) {
     String startTime = request->getParam("start")->value();
     String endTime = request->getParam("end")->value();
     // Handle the received start and end times for temperature sensor
-//    Serial.print("Temperature Sensor Start Time: ");
-//    Serial.println(startTime);
-//    Serial.print("Temperature Sensor End Time: ");
-//    Serial.println(endTime);
+    //    Serial.print("Temperature Sensor Start Time: ");
+    //    Serial.println(startTime);
+    //    Serial.print("Temperature Sensor End Time: ");
+    //    Serial.println(endTime);
     // Update the JSON file with the new start and end times for the temperature sensor
     updateJSONFile("temp", checkBoxValue, startTime, endTime);
   }
@@ -51,10 +51,10 @@ void handleSensorControlLDR(AsyncWebServerRequest* request) {
     String startTime = request->getParam("start")->value();
     String endTime = request->getParam("end")->value();
     // Handle the received start and end times for LDR sensor
-  //    Serial.print("LDR Sensor Start Time: ");
-  //    Serial.println(startTime);
-  //    Serial.print("LDR Sensor End Time: ");
-  //    Serial.println(endTime);
+    //    Serial.print("LDR Sensor Start Time: ");
+    //    Serial.println(startTime);
+    //    Serial.print("LDR Sensor End Time: ");
+    //    Serial.println(endTime);
     // Update the JSON file with the new start and end times for the LDR sensor
     updateJSONFile("ldr", checkBoxValue, startTime, endTime);
   }
