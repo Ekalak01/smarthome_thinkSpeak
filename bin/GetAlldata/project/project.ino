@@ -67,8 +67,6 @@ void setup() {
   bmecheck();
   rtcCheck();
 }
-
-
 void loop() {
   GetData datasensor = AllSenData();
   int distance =  datasensor.distance;
@@ -95,25 +93,20 @@ void loop() {
   }
   unsigned static int half_second_count = 0;
   //Post http get to ThingSpeak Every 5 minutes
-  if (half_second_count >= 600) {
+  if (half_second_count >= 30) {
     //Reset Timer
     half_second_count = 0;
-    String topicString = "channels/" + String(channelID) + "/publish";
-    String dataString1 = "&field1=" + String(light);
-    String dataString2 = "&field2=" + String(temp);
-    String dataString3 = "&field3=" + String(humidity);
     
-    mqtt.publish( topicString.c_str(), dataString1.c_str());
-    mqtt.publish( topicString.c_str(), dataString2.c_str());
-    mqtt.publish( topicString.c_str(), dataString3.c_str());
-   
-  }  
+    String topicString = "channels/" + String(channelID) + "/publish";
+    String dataString = "&field1=" + String(light) + "&field2=" + String(temp) + "&field3=" + String(humidity);
+    mqtt.publish(topicString.c_str(), dataString.c_str());
+    
+  }
   Serial.println(Time);
   Serial.println(distance);
   Serial.println(temp);
   Serial.println(humidity);
   Serial.println(light);
-  
   delay(500);
   half_second_count++;
 }
