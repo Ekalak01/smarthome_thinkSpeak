@@ -1,2 +1,2 @@
 ﻿# Smarthome_thinknet
-![flowchart drawio](https://user-images.githubusercontent.com/87509688/231877331-f8b8e7b2-3193-4687-8e3f-b20d7732c5a7.png)
+![flowchart](https://user-images.githubusercontent.com/87509688/231877766-f7019f09-48f0-4017-83eb-4b476779ad7d.jpg)
