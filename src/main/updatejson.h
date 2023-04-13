@@ -60,6 +60,46 @@ bool currentStateJSON() {
   return state;
 }
 
+struct SensorData{
+  String tempStart;
+  String tempEnd;
+  String ldrStart;
+  String ldrEnd;
+};
+SensorData readJSON_return() {
+  SensorData sensorData;
+  // Open the JSON file for reading
+  if (!SPIFFS.exists("/state.json")) {
+    Serial.println("Creating initial state.json");
+  }
+  File file = SPIFFS.open("/state.json", "r");
+  if (!file) {
+    Serial.println("Failed to open state.json for reading");
+    return sensorData;
+  }
+
+  // Parse the JSON file
+  DynamicJsonDocument doc(1024);
+  DeserializationError error = deserializeJson(doc, file);
+  if (error) {
+    Serial.println("Failed to parse state.json");
+    file.close();
+    return sensorData;
+  }
+
+  // Close the file
+  file.close();
+
+  // Get the values from the JSON object
+  JsonObject root = doc.as<JsonObject>();
+  bool state = root["state"];
+  String tempStart = root["temp"]["start"];
+  String tempEnd = root["temp"]["end"];
+  String ldrStart = root["ldr"]["start"];
+  String ldrEnd = root["ldr"]["end"];
+  return sensorData;
+}
+
 void readJSONFile() {
   // Open the JSON file for reading
   if (!SPIFFS.exists("/state.json")) {
@@ -131,9 +171,9 @@ void updateJSONFile(const char* key, bool switchState, const String& startTime, 
     // Create the JSON object
     root = doc.to<JsonObject>();
 
-    // Initialize the sub-objects for temp and c02
+    // Initialize the sub-objects for temp and ldr
     root.createNestedObject("temp");
-    root.createNestedObject("c02");
+    root.createNestedObject("ldr");
   }
 
   // Update the JSON object with new values

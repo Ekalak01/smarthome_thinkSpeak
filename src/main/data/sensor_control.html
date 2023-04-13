@@ -21,7 +21,7 @@
         margin: auto;
         justify-content: center;
         align-items: center;
-        <!-- justify-content: space-between; -->
+        /* justify-content: space-between; */
       }
       .container_on_off {
         display: flex;
@@ -30,7 +30,7 @@
         margin: auto;
         justify-content: center;
         align-items: center;
-        <!-- justify-content: space-between; -->
+        /* justify-content: space-between; */
       }
       .container_chart {
         display: flex; 
@@ -39,7 +39,7 @@
         margin: auto;
         justify-content: center;
         align-items: center;
-        <!-- justify-content: space-between; -->
+        /* justify-content: space-between; */
       }
       .left-section {
         width: 40%;
@@ -84,7 +84,7 @@
   <!-- Setting -->
   <dev class="container">
     <section class = "left-section" id ="setting-temp-body" style="display:none" >
-      <h3>LDR</h3>
+      <h3>Temp & Humidity Sensor</h3>
       <form>
         <label for="temp-start-time">Start Time:</label>
         <input type="time" id="temp-start-time" name="temp-start-time">
@@ -152,7 +152,6 @@
   </section>
   
  </dev>
-
  <dev class="container">
     <section class="container_chart">
         <canvas id="myChart2"></canvas>
@@ -195,7 +194,48 @@
           </script>
       </section>
  </dev>
-
+ <dev class="container">
+  <section class="container_chart">
+      <canvas id="myChart3"></canvas>
+      <script>
+          let myChart3;
+          function getData3() {
+            fetch('https://api.thingspeak.com/channels/1850223/fields/6.json?api_key=FSR7TIEJWNHWZOMO&results=10')
+              .then(response => response.json())
+              .then(data => {
+                // Extract the field5 values and timestamps from the response
+                const values = data.feeds.map(feed => feed.field6);
+                const timestamps = data.feeds.map(feed => moment(feed.created_at).format('YYYY-MM-DD HH:mm:ss'));
+        
+                // If the chart already exists, destroy it first
+                if (myChart3) {
+                  myChart3.destroy();
+                }
+                // Create a new Chart.js line chart
+                const ctx = document.getElementById('myChart3').getContext('2d');
+                myChart3 = new Chart(ctx, {
+                  type: 'line',
+                  data: {
+                    labels: timestamps,
+                    datasets: [{
+                      label: 'LDR',
+                      data: values,
+                      fill: false,
+                      borderColor: 'rgba(255, 176, 5, 0.969)',
+                      tension: 0.1
+                    }]
+                  },
+                  options: {}
+                });
+              })
+              .catch(error => console.error(error));
+          }
+          getData3();
+          // Call the getData function every 5 seconds
+          setInterval(getData3, 20000);
+        </script>
+    </section>
+</dev>
 
 
 </body>
