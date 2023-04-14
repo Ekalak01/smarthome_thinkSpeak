@@ -10,7 +10,7 @@ void LineNoti(int param,int check){
     if (current_time - last_notify_time >= 1000) {
     last_notify_time = current_time;
       if (check == 3) {
-        line.message = "มีคนเข้าบ้านมา "+String(param)+" คนแล้วงับ";
+        line.message = "มีคนเข้าบ้านมาเพิ่มทั้งหมด "+String(param)+" คนแล้วงับ";
         LineNotifySendingResult result = LineNotify.send(line);
       }
       if (param <= 10 && check == 1 ) {

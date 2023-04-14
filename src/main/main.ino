@@ -46,14 +46,15 @@ bool checkBoxValue = false;
 
 unsigned long startMillis;
 unsigned long totalPersons = 0;
+static long lastpersons = 0;
 int sensorState = 0;
 
 void countpeople(int distance) {
-
   if (distance > 0 && distance <= 20) {
     if (sensorState == 0) {
       sensorState = 1;
       totalPersons++;
+      lastpersons++;
     }
   }
   if (distance > 25 && sensorState == 1) {
@@ -66,8 +67,10 @@ void countpeople(int distance) {
     startMillis = currentMillis;
     totalPersons = 0;
   }
-  Serial.println(distance);
-  Serial.println(totalPersons);
+  Serial.print(distance);
+  Serial.println(" cm");
+  Serial.print(lastpersons );
+  Serial.println(" คน");
 }
 
 void setup() {
@@ -161,16 +164,18 @@ void interrupts_iram() {
     }
     if (tempEnd == currentTime_RTC) {
       interruptCounter_temp = 0;
-      Serial.print("interruptCounter_temp_tempEnd  "+interruptCounter_temp);
+      Serial.print("interruptCounter_temp_tempEnd  ");
       Serial.println(interruptCounter_temp);
     }
     if (ldrStart  == currentTime_RTC) {
       interruptCounter_ldr = 1;
-      Serial.print(interruptCounter_ldr);
+      Serial.print("interruptCounter_temp_ldrStart  ");
+      Serial.println(interruptCounter_ldr);
     }
     if (ldrEnd == currentTime_RTC) { // fix typo here
       interruptCounter_ldr = 0;
-      Serial.print(interruptCounter_ldr);
+      Serial.print("interruptCounter_temp_ldrEnd  ");
+      Serial.println(interruptCounter_ldr);
     }
   }
   else {
@@ -204,7 +209,7 @@ void loop() {
   float humidity = datasensor.humidity;
   int light = datasensor.light;
 
-  countpeople(distance);
+  
   /*static unsigned long last_notify_time = 0;
   unsigned long current_time = millis();
   if (current_time - last_notify_time >= 5 * 60 * 1000) {
@@ -213,14 +218,20 @@ void loop() {
   }*/
 
   interrupts_iram();
-  Serial.print("interrupts_iram_temp ");
+  Serial.print("interrupts_iram_temp  ");
   Serial.println(interruptCounter_temp);
-  if (interruptCounter_temp > 0 && interruptCounter_ldr > 0) {
+  Serial.print("interrupts_iram_ldr  ");
+  Serial.println(interruptCounter_ldr);
+  countpeople(distance);
+  if (interruptCounter_temp == 1 && interruptCounter_ldr == 1) {
     reconnectMqtt();
-//    Serial.print("InterruptCounter_temp and InterruptCounter_ldr!!");
+    Serial.print("InterruptCounter_temp and InterruptCounter_ldr!!");
     static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
     if (!notified) {
-      LineNoti(totalPersons, 3);
+      if (lastpersons >0 ){
+        LineNoti(lastpersons, 3);
+        lastpersons = 0;
+        }
       LineNoti(light,1);
       LineNoti(temp,2);
       LineNoti(humidity,4);
@@ -231,18 +242,22 @@ void loop() {
     } else {
       static unsigned long last_notify_time = 0;
       unsigned long current_time = millis();
-      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+      if (current_time - last_notify_time >= 1 * 60 * 1000) {
         last_notify_time = current_time;
         notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
+        
       }
     }     
   }
-  if (interruptCounter_temp > 0 && interruptCounter_ldr == 0) {
+  if (interruptCounter_temp == 1 && interruptCounter_ldr == 0) {
     reconnectMqtt();
     Serial.print("InterruptCounter_temp!!");
     static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
     if (!notified) {
-      LineNoti(totalPersons, 3);
+      if (lastpersons >0 ){
+        LineNoti(lastpersons, 3);
+        lastpersons = 0;
+        }
       LineNoti(temp,2);
       LineNoti(humidity,4);
       String topicString = "channels/" + String(channelID) + "/publish";
@@ -252,18 +267,21 @@ void loop() {
     } else {
       static unsigned long last_notify_time = 0;
       unsigned long current_time = millis();
-      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+      if (current_time - last_notify_time >= 1 * 60 * 1000) {
         last_notify_time = current_time;
         notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
       }
     }    
   }
-  if (interruptCounter_temp == 0 && interruptCounter_ldr > 0) {
+  if (interruptCounter_temp == 0 && interruptCounter_ldr == 1) {
     reconnectMqtt();
     Serial.print("InterruptCounter_ldr!!");
     static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
     if (!notified) {
-      LineNoti(totalPersons, 3);
+      if (lastpersons >0 ){
+        LineNoti(lastpersons, 3);
+        lastpersons = 0;
+        }
       LineNoti(light,1);
       String topicString = "channels/" + String(channelID) + "/publish";
       String dataString = "&field1=" + String(light);
@@ -272,7 +290,7 @@ void loop() {
     } else {
       static unsigned long last_notify_time = 0;
       unsigned long current_time = millis();
-      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+      if (current_time - last_notify_time >= 1 * 60 * 1000) {
         last_notify_time = current_time;
         notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
       }
