@@ -115,11 +115,12 @@
     <script>
         let myChart;
         function getData() {
-          fetch('https://api.thingspeak.com/channels/1850223/fields/5.json?api_key=FSR7TIEJWNHWZOMO&results=10')
+          fetch('https://api.thingspeak.com/channels/2105573/fields/2.json?api_key=HMRRVCO9IWTBGVIH&results=10')
             .then(response => response.json())
             .then(data => {
               // Extract the field5 values and timestamps from the response
-              const values = data.feeds.map(feed => feed.field5);
+              const values = data.feeds.map(feed => feed.field2);
+              
               const timestamps = data.feeds.map(feed => moment(feed.created_at).format('YYYY-MM-DD HH:mm:ss'));
       
               // If the chart already exists, destroy it first
@@ -140,7 +141,17 @@
                     tension: 0.1
                   }]
                 },
-                options: {}
+                options: {
+                  scales: {
+                    xAxes: [{
+                      type: 'time',
+                      time: {
+                        unit: 'minute',
+                        stepSize: 30
+                      }
+                    }]
+                  }
+                }
               });
             })
             .catch(error => console.error(error));
@@ -158,11 +169,11 @@
         <script>
             let myChart2;
             function getData2() {
-              fetch('https://api.thingspeak.com/channels/1850223/fields/6.json?api_key=FSR7TIEJWNHWZOMO&results=10')
+              fetch('https://api.thingspeak.com/channels/2105573/fields/3.json?api_key=HMRRVCO9IWTBGVIH&results=10')
                 .then(response => response.json())
                 .then(data => {
                   // Extract the field5 values and timestamps from the response
-                  const values = data.feeds.map(feed => feed.field6);
+                  const values = data.feeds.map(feed => feed.field3);
                   const timestamps = data.feeds.map(feed => moment(feed.created_at).format('YYYY-MM-DD HH:mm:ss'));
           
                   // If the chart already exists, destroy it first
@@ -200,11 +211,11 @@
       <script>
           let myChart3;
           function getData3() {
-            fetch('https://api.thingspeak.com/channels/1850223/fields/6.json?api_key=FSR7TIEJWNHWZOMO&results=10')
+            fetch('https://api.thingspeak.com/channels/2105573/fields/1.json?api_key=HMRRVCO9IWTBGVIH&results=10')
               .then(response => response.json())
               .then(data => {
                 // Extract the field5 values and timestamps from the response
-                const values = data.feeds.map(feed => feed.field6);
+                const values = data.feeds.map(feed => feed.field1);
                 const timestamps = data.feeds.map(feed => moment(feed.created_at).format('YYYY-MM-DD HH:mm:ss'));
         
                 // If the chart already exists, destroy it first

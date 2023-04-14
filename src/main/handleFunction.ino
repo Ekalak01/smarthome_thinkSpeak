@@ -41,7 +41,7 @@ void handleSensorControlTemp(AsyncWebServerRequest* request) {
     //    Serial.print("Temperature Sensor End Time: ");
     //    Serial.println(endTime);
     // Update the JSON file with the new start and end times for the temperature sensor
-    updateJSONFile("temp", checkBoxValue, startTime, endTime);
+    updateJSONFile("temp", true, startTime, endTime);
   }
   request->send(200, "text/plain", "OK");
 }
@@ -56,7 +56,8 @@ void handleSensorControlLDR(AsyncWebServerRequest* request) {
     //    Serial.print("LDR Sensor End Time: ");
     //    Serial.println(endTime);
     // Update the JSON file with the new start and end times for the LDR sensor
-    updateJSONFile("ldr", checkBoxValue, startTime, endTime);
+    updateJSONFile("ldr", true, startTime, endTime);
+    readJSONFile();
   }
   request->send(200, "text/plain", "OK");
 }

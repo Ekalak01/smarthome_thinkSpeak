@@ -60,15 +60,15 @@ bool currentStateJSON() {
   return state;
 }
 
-struct SensorData {
+struct SensorData_re {
   String tempStart;
   String tempEnd;
   String ldrStart;
   String ldrEnd;
 };
 
-SensorData readJSON_return() {
-  SensorData sensorData;
+SensorData_re readJSON_return() {
+  SensorData_re sensorData_rex;
   // Open the JSON file for reading
   if (!SPIFFS.exists("/state.json")) {
     Serial.println("Creating initial state.json");
@@ -76,7 +76,7 @@ SensorData readJSON_return() {
   File file = SPIFFS.open("/state.json", "r");
   if (!file) {
     Serial.println("Failed to open state.json for reading");
-    return sensorData;
+    return sensorData_rex;
   }
 
   // Parse the JSON file
@@ -85,7 +85,7 @@ SensorData readJSON_return() {
   if (error) {
     Serial.println("Failed to parse state.json");
     file.close();
-    return sensorData;
+    return sensorData_rex;
   }
 
   // Close the file
@@ -99,11 +99,11 @@ SensorData readJSON_return() {
   String ldrStart = root["ldr"]["start"];
   String ldrEnd = root["ldr"]["end"];
 
-  sensorData.tempStart = tempStart;
-  sensorData.tempEnd = tempEnd;
-  sensorData.ldrStart = ldrStart;
-  sensorData.ldrEnd = ldrEnd;
-  return sensorData;
+  sensorData_rex.tempStart = tempStart;
+  sensorData_rex.tempEnd = tempEnd;
+  sensorData_rex.ldrStart = ldrStart;
+  sensorData_rex.ldrEnd = ldrEnd;
+  return sensorData_rex;
 }
 
 void readJSONFile() {
