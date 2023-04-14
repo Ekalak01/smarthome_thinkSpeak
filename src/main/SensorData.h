@@ -5,15 +5,18 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 #include <BH1750.h>
+#include <NewPing.h>
 
 #define SEALEVELPRESSURE_HPA (1013.25)
 #define TRIGGER_PIN 4  //ตั้งขา Trig เป็น Output (D4)
 #define ECHO_PIN 5   //ตั้งขา Echo เป็น Input (D5)
+#define MAX_DISTANCE 400 // ตั้ง Max_distance ไว้ที่ 400 cm
 
 RTC_DS3231 rtc;
 BH1750 lightMeter;
 Adafruit_BME280 bme;
 unsigned long delayTime;
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 void rtcCheck(){
   rtc.begin();
@@ -42,8 +45,15 @@ void bmecheck(){
   Serial.println("-- Default Test --");
   delayTime = 1000;}
 
-
 int motioncheck(void){
+  delay(50);
+  unsigned int uS = sonar.ping_cm(); // Send ping, get ping time in microseconds (uS) and  Convert ping time to distance (in cm) .
+  int distance = uS ; 
+  return distance;
+  }
+
+
+/*int motioncheck(void){
   pinMode(TRIGGER_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
   digitalWrite(TRIGGER_PIN, LOW);
@@ -56,7 +66,7 @@ int motioncheck(void){
   int distance = duration*0.034/2;
   return distance;
   }
-  
+  */
 String getRtcString(void) {
   DateTime now = rtc.now();
   char Time[100];

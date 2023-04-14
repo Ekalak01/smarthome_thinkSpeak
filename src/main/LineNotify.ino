@@ -14,11 +14,11 @@ void LineNoti(int param,int check){
         LineNotifySendingResult result = LineNotify.send(line);
       }
       if (param <= 10 && check == 1 ) {
-        line.message = "โอ้ยๆมืดแล้วเปิดไฟหน่อยดิๆๆๆๆๆ";
+        line.message = "โอ้ยๆมืดแล้วเปิดไฟหน่อยดิๆๆๆๆๆ "+String(param)+" lux";
         LineNotifySendingResult result = LineNotify.send(line);
       }
       if (param > 10 && check == 1 ){
-        line.message = "ยังสว่างอยู่อย่าเพิ่งเปิดไฟ!! ประหยัดไฟหน่อยเถอะ";
+        line.message = "ยังสว่างอยู่อย่าเพิ่งเปิดไฟ!! ประหยัดไฟหน่อยเถอะ "+String(param)+" lux";
         LineNotifySendingResult result = LineNotify.send(line);
         }
       

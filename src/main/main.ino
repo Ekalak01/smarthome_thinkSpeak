@@ -56,7 +56,7 @@ void countpeople(int distance) {
       totalPersons++;
     }
   }
-  if (distance > 20 && sensorState == 1) {
+  if (distance > 25 && sensorState == 1) {
     sensorState = 0;
   }
   unsigned long currentMillis = millis();
@@ -66,6 +66,7 @@ void countpeople(int distance) {
     startMillis = currentMillis;
     totalPersons = 0;
   }
+  Serial.println(distance);
   Serial.println(totalPersons);
 }
 
@@ -217,10 +218,8 @@ void loop() {
   if (interruptCounter_temp > 0 && interruptCounter_ldr > 0) {
     reconnectMqtt();
 //    Serial.print("InterruptCounter_temp and InterruptCounter_ldr!!");
-    static unsigned long last_notify_time = 0;
-    unsigned long current_time = millis();
-    if (current_time - last_notify_time >= 15 * 60 * 1000) {
-      last_notify_time = current_time;
+    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    if (!notified) {
       LineNoti(totalPersons, 3);
       LineNoti(light,1);
       LineNoti(temp,2);
@@ -228,38 +227,55 @@ void loop() {
       String topicString = "channels/" + String(channelID) + "/publish";
       String dataString = "&field1=" + String(light) + "&field2=" + String(temp) + "&field3=" + String(humidity);
       mqtt.publish(topicString.c_str(), dataString.c_str());
-    }
-    
+      notified = true; // ตั้งค่า notified เป็น true เมื่อส่ง notify เรียบร้อยแล้ว
+    } else {
+      static unsigned long last_notify_time = 0;
+      unsigned long current_time = millis();
+      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+        last_notify_time = current_time;
+        notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
+      }
+    }     
   }
   if (interruptCounter_temp > 0 && interruptCounter_ldr == 0) {
     reconnectMqtt();
     Serial.print("InterruptCounter_temp!!");
-    static unsigned long last_notify_time = 0;
-    unsigned long current_time = millis();
-    if (current_time - last_notify_time >= 15 * 60 * 1000) {
-      last_notify_time = current_time;
+    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    if (!notified) {
       LineNoti(totalPersons, 3);
       LineNoti(temp,2);
       LineNoti(humidity,4);
       String topicString = "channels/" + String(channelID) + "/publish";
       String dataString = "&field2=" + String(temp) + "&field3=" + String(humidity);
       mqtt.publish(topicString.c_str(), dataString.c_str());
-    }
-    
+      notified = true; // ตั้งค่า notified เป็น true เมื่อส่ง notify เรียบร้อยแล้ว
+    } else {
+      static unsigned long last_notify_time = 0;
+      unsigned long current_time = millis();
+      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+        last_notify_time = current_time;
+        notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
+      }
+    }    
   }
   if (interruptCounter_temp == 0 && interruptCounter_ldr > 0) {
     reconnectMqtt();
     Serial.print("InterruptCounter_ldr!!");
-    static unsigned long last_notify_time = 0;
-    unsigned long current_time = millis();
-    if (current_time - last_notify_time >= 15 * 60 * 1000) {
-      last_notify_time = current_time;
+    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    if (!notified) {
       LineNoti(totalPersons, 3);
       LineNoti(light,1);
       String topicString = "channels/" + String(channelID) + "/publish";
       String dataString = "&field1=" + String(light);
       mqtt.publish(topicString.c_str(), dataString.c_str());
+      notified = true; // ตั้งค่า notified เป็น true เมื่อส่ง notify เรียบร้อยแล้ว
+    } else {
+      static unsigned long last_notify_time = 0;
+      unsigned long current_time = millis();
+      if (current_time - last_notify_time >= 5 * 60 * 1000) {
+        last_notify_time = current_time;
+        notified = false; // เมื่อถึงเวลาส่ง notify ใหม่ ตั้งค่า notified เป็น false เพื่อให้ส่ง notify ได้อีกครั้ง
+      }
     }
-    
   }
 }
