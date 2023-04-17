@@ -46,7 +46,7 @@ void bmecheck(){
   delayTime = 1000;}
 
 int motioncheck(void){
-  delay(50);
+  //delay(50);
   unsigned int uS = sonar.ping_cm(); // Send ping, get ping time in microseconds (uS) and  Convert ping time to distance (in cm) .
   int distance = uS ; 
   return distance;

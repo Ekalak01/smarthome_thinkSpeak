@@ -37,8 +37,8 @@ LineNotifyClient line;
 
 
 // Replace with your network credentials
-const char* ssid = "540_ROOM";
-const char* password = "12345555";
+const char* ssid = "Icesuskae_2.4G";
+const char* password = "1234naja";
 
 
 
@@ -157,31 +157,31 @@ void interrupts_iram() {
   if (stateCurrent == 1) {
     Serial.println("tempStart  "+tempStart);
     Serial.println("currentTime_RTC  "+currentTime_RTC);
-    if (tempStart == null){
+    if (tempStart == "null"){
       interruptCounter_temp = 1;
-      if (tempStart == currentTime_RTC) {
+    }
+    if (ldrStart == "null"){
+      interruptCounter_ldr = 1;
+    }
+    if (tempStart == currentTime_RTC) {
         interruptCounter_temp = 1;
         Serial.print("interruptCounter_temp_tempStart  ");
         Serial.println(interruptCounter_temp);
       }
-      if (tempEnd == currentTime_RTC) {
-        interruptCounter_temp = 0;
-        Serial.print("interruptCounter_temp_tempEnd  ");
-        Serial.println(interruptCounter_temp);
-      }
+    if (tempEnd == currentTime_RTC) {
+      interruptCounter_temp = 0;
+      Serial.print("interruptCounter_temp_tempEnd  ");
+      Serial.println(interruptCounter_temp);
     }
-    if (ldrStart == null){
-      interruptCounter_ldr = 1;
-      if (ldrStart  == currentTime_RTC) {
+    if (ldrStart  == currentTime_RTC) {
         interruptCounter_ldr = 1;
         Serial.print("interruptCounter_temp_ldrStart  ");
         Serial.println(interruptCounter_ldr);
       }
-      if (ldrEnd == currentTime_RTC) { // fix typo here
-        interruptCounter_ldr = 0;
-        Serial.print("interruptCounter_temp_ldrEnd  ");
-        Serial.println(interruptCounter_ldr);
-      }
+    if (ldrEnd == currentTime_RTC) { // fix typo here
+      interruptCounter_ldr = 0;
+      Serial.print("interruptCounter_temp_ldrEnd  ");
+      Serial.println(interruptCounter_ldr);
     }
   }
   else {
@@ -205,6 +205,7 @@ void reconnectMqtt() {
     }
   }
 }
+static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
 
 void loop() {
   // Get Data
@@ -229,10 +230,15 @@ void loop() {
   Serial.print("interrupts_iram_ldr  ");
   Serial.println(interruptCounter_ldr);
   countpeople(distance);
+  Serial.print(temp);
+  Serial.println(" C");
+  Serial.print(humidity);
+  Serial.println(" %");
+  Serial.print(light);
+  Serial.println(" lux");
   if (interruptCounter_temp == 1 && interruptCounter_ldr == 1) {
     reconnectMqtt();
-    Serial.print("InterruptCounter_temp and InterruptCounter_ldr!!");
-    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    Serial.println("InterruptCounter_temp and InterruptCounter_ldr!!");
     if (!notified) {
       if (lastpersons >0 ){
         LineNoti(lastpersons, 3);
@@ -255,10 +261,9 @@ void loop() {
       }
     }     
   }
-  if (interruptCounter_temp == 1 && interruptCounter_ldr == 0) {
+  else if (interruptCounter_temp == 1 && interruptCounter_ldr == 0) {
     reconnectMqtt();
-    Serial.print("InterruptCounter_temp!!");
-    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    Serial.println("InterruptCounter_temp!!");
     if (!notified) {
       if (lastpersons >0 ){
         LineNoti(lastpersons, 3);
@@ -279,10 +284,9 @@ void loop() {
       }
     }    
   }
-  if (interruptCounter_temp == 0 && interruptCounter_ldr == 1) {
+  else if (interruptCounter_temp == 0 && interruptCounter_ldr == 1) {
     reconnectMqtt();
-    Serial.print("InterruptCounter_ldr!!");
-    static bool notified = false; // เพิ่มตัวแปร notified เพื่อบอกว่าได้ส่ง notify ไปแล้วหรือยัง
+    Serial.println("InterruptCounter_ldr!!");
     if (!notified) {
       if (lastpersons >0 ){
         LineNoti(lastpersons, 3);
