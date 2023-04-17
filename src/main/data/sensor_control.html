@@ -82,7 +82,7 @@
     </section>
   </section>
   <!-- Setting -->
-  <dev class="container">
+  <dev class="container" >
     <section class = "left-section" id ="setting-temp-body" style="display:none" >
       <h3>Temp & Humidity Sensor</h3>
       <form>
@@ -92,7 +92,10 @@
         <label for="temp-end-time">End Time:</label>
         <input type="time" id="temp-end-time" name="temp-end-time">
         <br>
+        <div style="justify-content:space-between;"> 
         <button type="button" onclick="sendSensorControltemp()">Set Time temp</button>
+        <button temp = "temp" type="button" onclick="sendSensorrest(this.getAttribute('temp'))">Reset Time temp</button>
+        </div>
       </form>
     </section>
     <section class = "left-section" id = "setting-ldr-body" style="display:none" >
@@ -104,7 +107,10 @@
         <label for="ldr-end-time">End Time:</label>
         <input type="time" id="ldr-end-time" name="ldr-end-time">
         <br>
+        <div style="justify-content:space-between;"> 
         <button type="button" onclick="sendSensorControlldr()">Set Time ldr</button>
+        <button ldr = "ldr" type="button" onclick="sendSensorrest(this.getAttribute('ldr'))">Reset Time ldr</button>
+        </div>
       </form>
     </section>
   </dev>
@@ -346,7 +352,36 @@
       xhttp.open("GET", "/check-on-off?checkBox=" + switchState, true);
       xhttp.send();
     }
+    // Function to send Reset time 
+    function sendSensorrest(module) {
+      var now = new Date();
+      var startHour = now.getHours();
+      var startMinute = now.getMinutes();
+      var endHour = (startHour + 24) % 24;
+      var endMinute = startMinute;
+      //var startTime = ("00" + startHour).slice(-2) + ":" + ("00" + startMinute).slice(-2);
+      //var endTime = ("00" + endHour).slice(-2) + ":" + ("00" + endMinute).slice(-2);
+      var startTime = null;
+      var endTime = null;
+      // Create a new XMLHttpRequest object
+      var xhttp = new XMLHttpRequest();
+      
+      // Set up the request parameters
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          // Display the response from the server in the console
+          console.log(this.responseText);
+          // Update the HTML based on the response
+          
+        }
+      };      
+  
+      
+      xhttp.open("GET", "/sensor-control-"+module+"?start=" + startTime + "&end=" + endTime, true);
+      xhttp.send();
+      location.reload();
 
+    }
     // Function to send sensor control data for temperature sensor to server
     function sendSensorControltemp() {
       // Get the start and end times from the form

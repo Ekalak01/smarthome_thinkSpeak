@@ -155,27 +155,33 @@ void interrupts_iram() {
   String ldrStart = sensorData_rex.ldrStart;
   String ldrEnd = sensorData_rex.ldrEnd;
   if (stateCurrent == 1) {
-    Serial.println("tempStart"+tempStart);
-    Serial.println("currentTime_RTC"+currentTime_RTC);
-    if (tempStart == currentTime_RTC) {
+    Serial.println("tempStart  "+tempStart);
+    Serial.println("currentTime_RTC  "+currentTime_RTC);
+    if (tempStart == null){
       interruptCounter_temp = 1;
-      Serial.print("interruptCounter_temp_tempStart  ");
-      Serial.println(interruptCounter_temp);
+      if (tempStart == currentTime_RTC) {
+        interruptCounter_temp = 1;
+        Serial.print("interruptCounter_temp_tempStart  ");
+        Serial.println(interruptCounter_temp);
+      }
+      if (tempEnd == currentTime_RTC) {
+        interruptCounter_temp = 0;
+        Serial.print("interruptCounter_temp_tempEnd  ");
+        Serial.println(interruptCounter_temp);
+      }
     }
-    if (tempEnd == currentTime_RTC) {
-      interruptCounter_temp = 0;
-      Serial.print("interruptCounter_temp_tempEnd  ");
-      Serial.println(interruptCounter_temp);
-    }
-    if (ldrStart  == currentTime_RTC) {
+    if (ldrStart == null){
       interruptCounter_ldr = 1;
-      Serial.print("interruptCounter_temp_ldrStart  ");
-      Serial.println(interruptCounter_ldr);
-    }
-    if (ldrEnd == currentTime_RTC) { // fix typo here
-      interruptCounter_ldr = 0;
-      Serial.print("interruptCounter_temp_ldrEnd  ");
-      Serial.println(interruptCounter_ldr);
+      if (ldrStart  == currentTime_RTC) {
+        interruptCounter_ldr = 1;
+        Serial.print("interruptCounter_temp_ldrStart  ");
+        Serial.println(interruptCounter_ldr);
+      }
+      if (ldrEnd == currentTime_RTC) { // fix typo here
+        interruptCounter_ldr = 0;
+        Serial.print("interruptCounter_temp_ldrEnd  ");
+        Serial.println(interruptCounter_ldr);
+      }
     }
   }
   else {
